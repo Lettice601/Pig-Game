@@ -1,0 +1,59 @@
+from random import randint
+
+points_to_win = 100
+dice_size = 6
+players = ["Player 1", "Player 2"]
+player_scores = [0, 0]
+current_player = 0
+
+def roll_dice():
+    return randint(1, dice_size)
+
+def play_turn(player_index):
+    turn_total = 0
+    while True:
+        if input(f"{players[player_index]}: (R)oll or (H)old? ") == "R":
+            roll = roll_dice()
+            if roll == 1:
+                print(f"{players[player_index]} rolled a 1! No points this turn.")
+                return 0
+            else:
+                turn_total += roll
+                print(f"You rolled a {roll}. Total points this turn: {turn_total}")
+        else:
+            return turn_total
+
+def cpu_turn():
+    turn_total = 0
+    while True:
+        if player_scores[1] + turn_total <= player_scores[0] + 10:
+            roll = roll_dice()
+            if roll == 1:
+                print(f"{players[1]} rolled a 1! No points this turn.")
+                return 0
+            else:
+                turn_total += roll
+                print(f"{players[1]} rolled a {roll}. Total points this turn: {turn_total}") 
+
+        else:
+            print(f"{players[1]} decides to hold. Total points this turn: {turn_total}")
+            return turn_total
+
+def main():
+    global current_player
+    cpu_enabled = False
+    players[0] = input("Enter name for Player 1: ")
+    players[1] = input("Enter name for Player 2: ")
+    if input("Do you want to play against the CPU? (y/n): ").lower() == "y":
+        cpu_enabled = True
+
+    while max(player_scores) < points_to_win:
+        print(f"\n{players[current_player % 2]}'s turn. Current score: {player_scores[current_player % 2]}")
+        if players[current_player % 2] == 1 and cpu_enabled == True:
+            player_scores[current_player % 2] += cpu_turn()
+            current_player += 1
+        else:
+            player_scores[current_player % 2] += play_turn(current_player)
+            current_player += 1
+
+main()
