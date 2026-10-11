@@ -75,8 +75,7 @@ def main():
     print(f"{players[current_player]} won!")
 
 
-if __name__ == "main":
-    while True:
-        main()
-        if input("Do you want to play again? (Y/N) ").lower != "y":
-            break
+while True:
+    main()
+    if input("Do you want to play again? (Y/N) ").lower != "y":
+        break
