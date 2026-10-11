@@ -1,15 +1,5 @@
-from random import randint
-
-#------CONFIG OPTIONS------#
-points_to_win = 100
-dice_size = 6
-players = ["Player 1", "Player 2"]
-player_scores = [0, 0]
-current_player = 0
-
-
-def roll_dice():
-    return randint(1, dice_size)
+from config import *
+from cpu_play import cpu_turn
 
 def swap_player():
     global current_player
@@ -33,22 +23,6 @@ def play_turn(player_index):
             print(f"{players[player_index]} decides to hold. Total points this turn: {turn_total}")
             return turn_total
 
-def cpu_turn():
-    turn_total = 0
-    while True:
-        if player_scores[1] + turn_total <= player_scores[0] + 10:
-            roll = roll_dice()
-            if roll == 1:
-                print(f"{players[1]} rolled a 1! No points this turn.")
-                return 0
-            else:
-                turn_total += roll
-                print(f"{players[1]} rolled a {roll}. Total points this turn: {turn_total}") 
-
-        else:
-            print(f"{players[1]} decides to hold. Total points this turn: {turn_total}")
-            return turn_total
-
 def main():
     global current_player
     cpu_enabled = False
@@ -62,20 +36,28 @@ def main():
         if cpu_enabled:
             if current_player == 1:
                 player_scores[1] += cpu_turn()
+                if max(player_scores) >= 100:
+                    break
                 current_player = 0
             else:
                 player_scores[0] += play_turn(0)
+                if max(player_scores) >= 100:
+                    break
                 current_player = 1
         else:
             player_scores[current_player] += play_turn(current_player)
             if max(player_scores) >= 100:
                 break
             swap_player()
-
+    
     print(f"{players[current_player]} won!")
 
 
 while True:
     main()
-    if input("Do you want to play again? (Y/N) ").lower != "y":
-        break
+    if input("Do you want to play again? (Y/N) ").lower == "y":
+        player_scores[0] = 0
+        player_scores[1] = 0
+        continue
+    break
+
