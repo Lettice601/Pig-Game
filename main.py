@@ -9,6 +9,13 @@ current_player = 0
 def roll_dice():
     return randint(1, dice_size)
 
+def swap_player():
+    global current_player
+    if current_player == 0:
+        current_player = 1
+    else:
+        current_player = 0
+
 def play_turn(player_index):
     turn_total = 0
     while True:
@@ -48,12 +55,16 @@ def main():
         cpu_enabled = True
 
     while max(player_scores) < points_to_win:
-        print(f"\n{players[current_player % 2]}'s turn. Current score: {player_scores[current_player % 2]}")
-        if players[current_player % 2] == 1 and cpu_enabled == True:
-            player_scores[current_player % 2] += cpu_turn()
-            current_player += 1
+        print(f"\n{players[current_player]}'s turn. Current score: {players[0]}: {player_scores[0]}, {players[1]}: {player_scores[1]}.")
+        if cpu_enabled:
+            if current_player == 1:
+                player_scores[1] += cpu_turn()
+                current_player = 0
+            else:
+                player_scores[0] += play_turn(0)
+                current_player = 1
         else:
-            player_scores[current_player % 2] += play_turn(current_player)
-            current_player += 1
+            player_scores[current_player] += play_turn(current_player)
+            swap_player()
 
 main()
