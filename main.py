@@ -1,10 +1,12 @@
 from random import randint
 
+#------CONFIG OPTIONS------#
 points_to_win = 100
 dice_size = 6
 players = ["Player 1", "Player 2"]
 player_scores = [0, 0]
 current_player = 0
+
 
 def roll_dice():
     return randint(1, dice_size)
@@ -19,7 +21,7 @@ def swap_player():
 def play_turn(player_index):
     turn_total = 0
     while True:
-        if input(f"{players[player_index]}: (R)oll or (H)old? ") == "R":
+        if input(f"{players[player_index]}: (R)oll or (H)old? ").lower() == "r":
             roll = roll_dice()
             if roll == 1:
                 print(f"{players[player_index]} rolled a 1! No points this turn.")
@@ -28,6 +30,7 @@ def play_turn(player_index):
                 turn_total += roll
                 print(f"You rolled a {roll}. Total points this turn: {turn_total}")
         else:
+            print(f"{players[player_index]} decides to hold. Total points this turn: {turn_total}")
             return turn_total
 
 def cpu_turn():
@@ -65,6 +68,10 @@ def main():
                 current_player = 1
         else:
             player_scores[current_player] += play_turn(current_player)
+            if max(player_scores) >= 100:
+                break
             swap_player()
+
+    print(f"{players[]} won!")
 
 main()
