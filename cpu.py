@@ -3,15 +3,18 @@ import random as r
 from time import sleep
 
 
-def compute_chance_to_hold(turn_total):
-    return(1-((25-turn_total)/25))
+def compute_chance_to_hold(turn_total, player_scores):
+    chance_to_hold = 1-((25-turn_total)/25)
+    if (player_scores[0] + turn_total) - player_scores[1] > 20:
+        chance_to_hold *= (75-player_scores[1])/75
+    return(chance_to_hold)
 
 def cpu_turn(player_scores, players):
     turn_total = 0
     while True:
         if DEBUG_ENABLE:
-            print(compute_chance_to_hold(turn_total))
-        if r.random() >= compute_chance_to_hold(turn_total):
+            print(compute_chance_to_hold(turn_total, (player_scores)))
+        if r.random() >= compute_chance_to_hold(turn_total, player_scores):
             roll = roll_dice()
             if roll == 1:
                 print(f"{players[1]} rolled a 1! No points this turn.")
