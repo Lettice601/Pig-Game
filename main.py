@@ -1,5 +1,9 @@
 from config import *
-from cpu_play import cpu_turn
+from cpu import cpu_turn
+
+players = ["Player 1", "Player 2"]
+player_scores = [0, 0]
+current_player = 0
 
 def swap_player():
     global current_player
@@ -35,29 +39,22 @@ def main():
         print(f"\n{players[current_player]}'s turn. Current score: {players[0]}: {player_scores[0]}, {players[1]}: {player_scores[1]}.")
         if cpu_enabled:
             if current_player == 1:
-                player_scores[1] += cpu_turn()
-                if max(player_scores) >= 100:
-                    break
-                current_player = 0
+                player_scores[1] += cpu_turn(player_scores, players)
+                if max(player_scores) < points_to_win:
+                    current_player = 0
             else:
                 player_scores[0] += play_turn(0)
-                if max(player_scores) >= 100:
-                    break
-                current_player = 1
+                if max(player_scores) < points_to_win:
+                    current_player = 1
         else:
             player_scores[current_player] += play_turn(current_player)
-            if max(player_scores) >= 100:
-                break
             swap_player()
-    
+
     print(f"{players[current_player]} won!")
 
 
 while True:
     main()
-    if input("Do you want to play again? (Y/N) ").lower == "y":
-        player_scores[0] = 0
-        player_scores[1] = 0
-        continue
-    break
-
+    player_scores[0], player_scores[1] = 0, 0
+    if input("Do you want to play again? (Y/N) ").lower() != "y":
+        break
