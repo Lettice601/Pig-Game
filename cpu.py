@@ -15,7 +15,7 @@ def cpu_turn(player_scores, players):
             roll = roll_dice()
             if roll == 1:
                 print(f"{players[1]} rolled a 1! No points this turn.")
-                return 0
+                return(0)
             else:
                 turn_total += roll
                 print(f"{players[1]} rolled a {roll}. Total points this turn: {turn_total}") 
