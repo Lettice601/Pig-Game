@@ -1,3 +1,6 @@
+import asyncio
+import json
+from websockets.asyncio.server import serve
 from config import *
 from cpu import cpu_turn
 
@@ -33,12 +36,28 @@ def play_turn(player_index):
             print(f"{players[player_index]} decides to hold. Total points this turn: {turn_total}")
             return turn_total
 
+async def recv_turn(websocket):
+    end_of_turn = False
+    turn_total = 0
+    while not end_of_turn:
+        action = await websocket.recv()
+        action = json.loads(action)
+        if action["action"] == "r":
+            if action["roll"] == 1:
+                return 0
+            else:
+                turn_total += action["roll"]
+                print(f"You rolled a {action["roll"]}. Total points this turn: {action["turn_total"]}")
+        if action["action"] == "h":
+            end_of_turn = True
+    return(turn_total)
+
 def main():
     global current_player
     global choose_roll
     if DEBUG_ENABLE and input("Choose roll?").lower == "y":
         choose_roll = True
-    
+
     cpu_enabled = False
     players[0] = input("Enter name for Player 1: ")
     players[1] = input("Enter name for Player 2: ")
@@ -66,8 +85,32 @@ def main():
         swap_player()
         print(f"{players[current_player]} won!")
 
+async def online_main_server(websocket):
+    global current_player
+    players[0] = input("Enter name for Player 1: ")
+    players[1] = await websocket.recv()
+
+    while max(player_scores) < points_to_win:
+        print(f"\n{players[current_player]}'s turn. Current score: {players[0]}: {player_scores[0]}, {players[1]}: {player_scores[1]}.")
+
+        if current_player == 0:
+            player_scores[current_player] += play_turn(current_player)
+            swap_player()
+        else:
+            player_scores[current_player] += recv_turn()
+            
+
+
 while True:
-    main()
+    if input("Would you like to play online? (Y/N)").lower() == "y":
+        usr_input = input("(H)ost or input host IP: ").lower
+        if usr_input == "h":
+            asyncio.run(online_main_server())
+        else:
+            print("goodbye")
+    else:
+        main()
+
     player_scores[0], player_scores[1] = 0, 0
     current_player = 0
     if input("Do you want to play again? (Y/N) ").lower() != "y":
