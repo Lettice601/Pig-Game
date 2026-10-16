@@ -4,6 +4,8 @@ from cpu import cpu_turn
 players = ["Player 1", "Player 2"]
 player_scores = [0, 0]
 current_player = 0
+choose_roll = False
+
 
 def swap_player():
     global current_player
@@ -16,7 +18,11 @@ def play_turn(player_index):
     turn_total = 0
     while True:
         if input(f"{players[player_index]}: (R)oll or (H)old? ").lower() == "r":
-            roll = roll_dice()
+            if not DEBUG_ENABLE or not choose_roll:
+                roll = roll_dice()
+            else:
+                roll = input()
+
             if roll == 1:
                 print(f"{players[player_index]} rolled a 1! No points this turn.")
                 return 0
@@ -29,6 +35,10 @@ def play_turn(player_index):
 
 def main():
     global current_player
+    global choose_roll
+    if DEBUG_ENABLE and input("Choose roll?").lower == "y":
+        choose_roll = True
+    
     cpu_enabled = False
     players[0] = input("Enter name for Player 1: ")
     players[1] = input("Enter name for Player 2: ")
@@ -49,12 +59,16 @@ def main():
         else:
             player_scores[current_player] += play_turn(current_player)
             swap_player()
-
-    print(f"{players[current_player]} won!")
-
+    
+    if cpu_enabled:
+        print(f"{players[current_player]} won!")
+    else:
+        swap_player()
+        print(f"{players[current_player]} won!")
 
 while True:
     main()
     player_scores[0], player_scores[1] = 0, 0
+    current_player = 0
     if input("Do you want to play again? (Y/N) ").lower() != "y":
         break
