@@ -2,7 +2,7 @@ from config import *
 from cpu import cpu_turn
 
 players = ["Player 1", "Player 2"]
-player_scores = [40, 0]
+player_scores = [0, 0]
 current_player = 0
 choose_roll = False
 
