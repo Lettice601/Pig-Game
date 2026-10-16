@@ -2,7 +2,7 @@ from config import *
 from cpu import cpu_turn
 
 players = ["Player 1", "Player 2"]
-player_scores = [50, 0]
+player_scores = [0, 0]
 current_player = 0
 choose_roll = False
 
@@ -59,9 +59,12 @@ def main():
         else:
             player_scores[current_player] += play_turn(current_player)
             swap_player()
-
-    print(f"{players[current_player]} won!")
-
+    
+    if cpu_enabled:
+        print(f"{players[current_player]} won!")
+    else:
+        swap_player()
+        print(f"{players[current_player]} won!")
 
 while True:
     main()
