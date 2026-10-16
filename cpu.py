@@ -10,7 +10,7 @@ def compute_chance_to_hold(turn_total, player_scores):
         print(chance_to_hold)
     
     if (player_scores[0] - turn_total) - player_scores[1] > 20:
-        chance_to_hold *= 0.5 * (abs(player_scores[0]) - (player_scores[1] + turn_total))/(abs(player_scores[0]))
+        chance_to_hold *= 0.5 * (player_scores[0] - (player_scores[1] + turn_total))/player_scores[0]
     
     if DEBUG_ENABLE:
         print(chance_to_hold)

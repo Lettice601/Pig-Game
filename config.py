@@ -1,7 +1,7 @@
 from random import randint
 
 #------CONFIG OPTIONS------#
-DEBUG_ENABLE = 0
+DEBUG_ENABLE = 1
 points_to_win = 100
 dice_size = 6
 
