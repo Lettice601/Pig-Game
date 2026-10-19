@@ -2,16 +2,17 @@
 
 from websockets.sync.client import connect
 
-def hello():
+def main():
     uri = "ws://localhost:8765"
     with connect(uri) as websocket:
-        name = input("What's your name? ")
+        while True:
+            msg = input("message to send")
 
-        websocket.send(name)
-        print(f">>> {name}")
+            websocket.send(msg)
+            print(f">>> {msg}")
 
-        greeting = websocket.recv()
-        print(f"<<< {greeting}")
+            recvd_msg = websocket.recv()
+            print(f"<<< {recvd_msg}")
 
 if __name__ == "__main__":
-    hello()
+    main()
