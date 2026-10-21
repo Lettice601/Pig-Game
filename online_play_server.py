@@ -14,7 +14,7 @@ async def play_turn(websocket):
     while True:
         if input(f"{players[0]}: (R)oll or (H)old? ").lower() == "r":
             roll = roll_dice()
-            websocket.send(json.dumps({"action": "r", "roll": roll}))
+            await websocket.send(json.dumps({"action": "r", "roll": roll}))
             if roll == 1:
                 print(f"{players[0]} rolled a 1! No points this turn.")
                 return 0
@@ -22,7 +22,7 @@ async def play_turn(websocket):
                 turn_total += roll
                 print(f"You rolled a {roll}. Total points this turn: {turn_total}")
         else:
-            websocket.send(json.dumps({"action": "h", "roll": 0}))
+            await websocket.send(json.dumps({"action": "h", "roll": 0}))
             print(f"{players[0]} decides to hold. Total points this turn: {turn_total}")
             return turn_total
 
@@ -45,12 +45,16 @@ async def recv_turn(websocket):
 async def host_server(websocket):
     player_scores = [0, 0]
     current_player = 0
+
+    settings = json.dumps({"points_to_win": points_to_win, "dice_size": dice_size})
+    await websocket.send(settings)
     
     players[0] = input("Player 1 name: ")
-    players[1] = await websocket.recv()
-    websocket.send("name")
-    print(f"Player 2's name is {players[1]}")
+    await websocket.send(json.dumps({"p1_name": players[0]}))
 
+    data = json.loads(await websocket.recv())
+    players[1] = data["p2_name"]
+    print(f"Player 2's name is {players[1]}")
 
     while max(player_scores) < points_to_win:
         print(f"\n{players[current_player]}'s turn. Current score: {players[0]}: {player_scores[0]}, {players[1]}: {player_scores[1]}.")

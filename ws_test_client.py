@@ -1,18 +1,21 @@
 #!/usr/bin/env python
 
 from websockets.sync.client import connect
+import aioconsole as aio
+import asyncio
 
-def main():
+async def recv_data(websocket):
+    print(f"<<< {await websocket.recv()}")
+
+async def send_data(websocket):
+    line = await aio.ainput("Enter Message: ")
+    await websocket.send(line)
+
+async def main():
     uri = "ws://localhost:8765"
     with connect(uri) as websocket:
         while True:
-            msg = input("message to send")
-
-            websocket.send(msg)
-            print(f">>> {msg}")
-
-            recvd_msg = websocket.recv()
-            print(f"<<< {recvd_msg}")
+            await asyncio.gather(send_data(websocket), recv_data(websocket))
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
