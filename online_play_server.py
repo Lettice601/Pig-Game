@@ -8,6 +8,7 @@ from websockets.asyncio.server import serve
 players = ["Player 1", "Player 2"]
 player_scores = [0, 0]
 current_player = 0
+CLIENT = set()
 
 async def play_turn(websocket):
     turn_total = 0
@@ -27,6 +28,8 @@ async def play_turn(websocket):
             return turn_total
 
 async def recv_turn(websocket):
+    turn_total = 0
+
     while True:
         action = await websocket.recv()
         action = json.loads(action)
@@ -43,14 +46,14 @@ async def recv_turn(websocket):
             return turn_total
 
 async def host_server(websocket):
+    global server
+    server.close()
     player_scores = [0, 0]
     current_player = 0
-
-    settings = json.dumps({"points_to_win": points_to_win, "dice_size": dice_size})
-    await websocket.send(settings)
     
     players[0] = input("Player 1 name: ")
-    await websocket.send(json.dumps({"p1_name": players[0]}))
+    settings = json.dumps({"points_to_win": points_to_win, "dice_size": dice_size, "p1_name": players[0]})
+    await websocket.send(settings)
 
     data = json.loads(await websocket.recv())
     players[1] = data["p2_name"]
@@ -59,7 +62,6 @@ async def host_server(websocket):
     while max(player_scores) < points_to_win:
         print(f"\n{players[current_player]}'s turn. Current score: {players[0]}: {player_scores[0]}, {players[1]}: {player_scores[1]}.")
         if current_player == 0:
-            print(await play_turn(websocket))
             player_scores[0] += await play_turn(websocket)
             current_player = 1
 
@@ -67,10 +69,15 @@ async def host_server(websocket):
             player_scores[1] += await recv_turn(websocket)
             current_player = 0
 
-
-    print(f"{players[current_player]} won!")
+    if current_player == 0:
+        print(f"{players[1]} won!")
+    elif current_player == 1:
+        print(f"{players[0]} won!")
+    else:
+        raise ValueError("Error: Invalid current_player value.")
 
 async def main():
+    global server
     server = await serve(host_server, "localhost", 8765)
     await server.serve_forever()
 

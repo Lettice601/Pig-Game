@@ -1,9 +1,9 @@
 from random import randint
 
 #------CONFIG OPTIONS------#
-DEBUG_ENABLE = 1
-points_to_win = 100
-dice_size = 6
+DEBUG_ENABLE: bool = True
+points_to_win: int = 100
+dice_size: int = 6
 
 def roll_dice():
     return randint(1, dice_size)
