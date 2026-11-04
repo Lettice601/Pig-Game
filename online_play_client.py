@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from websockets.sync.client import connect
 from config import *
 import asyncio
