@@ -14,4 +14,5 @@ while True:
         if input("Host? (Y/N) ").lower() != "y":
             ops.main()
         else:
-            opl.main()
+            opl.main(input("Enter server URI (e.g., ws://localhost:8765): "))
+            

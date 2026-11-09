@@ -76,8 +76,12 @@ async def connect_to_server(websocket):
     else:
         raise ValueError("Error: Invalid current_player value.")
 
-if __name__ == "__main__":
-    uri = "ws://localhost:8765"
+def main(uri):
     with connect(uri) as websocket:
         while True:
             asyncio.run(connect_to_server(websocket))
+
+if __name__ == "__main__":
+    uri = "ws://localhost:8765"
+    main(uri)
+    
