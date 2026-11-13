@@ -82,6 +82,6 @@ def main(uri):
             asyncio.run(connect_to_server(websocket))
 
 if __name__ == "__main__":
-    uri = "ws://localhost:8765"
+    uri = "ws://10.10.2.135:8765"
     main(uri)
     

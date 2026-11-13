@@ -76,11 +76,11 @@ async def host_server(websocket):
     else:
         raise ValueError("Error: Invalid current_player value.")
 
-def main():
+async def main():
     global server
-    server = serve(host_server, "localhost", 8765)
-    _ = server.serve_forever()
+    server = await serve(host_server, "10.10.2.135", 8765)
+    await server.serve_forever()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
     
