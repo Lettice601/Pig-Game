@@ -1,21 +1,22 @@
-#!/usr/bin/env python
-
-from websockets.sync.client import connect
-import aioconsole as aio
 import asyncio
+import logging
+import websockets
 
-async def recv_data(websocket):
-    print(f"<<< {websocket.recv()}")
+# Configure logging
+logging.basicConfig(
+    level=logging.DEBUG,  # DEBUG level shows detailed logs
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s"
+)
 
-async def send_data(websocket):
-    line = await aio.ainput("Enter Message: ")
-    await websocket.send(line)
+# Optional: limit logs from other libraries if too noisy
+logging.getLogger("asyncio").setLevel(logging.WARNING)
 
-async def main():
-    uri = "ws://localhost:8765"
-    with connect(uri) as websocket:
-        while True:
-            asyncio.gather(send_data(websocket), recv_data(websocket))
+async def echo_client():
+    uri = "wss://echo.websocket.org"  # Example public echo server
+    async with websockets.connect(uri) as websocket:
+        await websocket.send("Hello WebSocket!")
+        response = await websocket.recv()
+        print("Received:", response)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(echo_client())

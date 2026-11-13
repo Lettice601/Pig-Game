@@ -18,10 +18,12 @@ async def play_turn(websocket):
             await websocket.send(json.dumps({"action": "r", "roll": roll}))
             if roll == 1:
                 print(f"{players[0]} rolled a 1! No points this turn.")
+                await websocket.send(json.dumps({"action": "r", "roll": roll}))
                 return 0
             else:
                 turn_total += roll
                 print(f"You rolled a {roll}. Total points this turn: {turn_total}")
+                await websocket.send(json.dumps({"action": "r", "roll": roll}))
         else:
             await websocket.send(json.dumps({"action": "h", "roll": 0}))
             print(f"{players[0]} decides to hold. Total points this turn: {turn_total}")
@@ -46,8 +48,6 @@ async def recv_turn(websocket):
             return turn_total
 
 async def host_server(websocket):
-    global server
-    server.close()
     player_scores = [0, 0]
     current_player = 0
     
@@ -77,8 +77,7 @@ async def host_server(websocket):
         raise ValueError("Error: Invalid current_player value.")
 
 async def main():
-    global server
-    server = await serve(host_server, "10.10.2.135", 8765)
+    server = await serve(host_server, "0.0.0.0", 8765)
     await server.serve_forever()
 
 if __name__ == "__main__":

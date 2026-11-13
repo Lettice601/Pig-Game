@@ -1,9 +1,21 @@
 #!/usr/bin/env python
 
+import logging
+
 from websockets.sync.client import connect
 from config import *
 import asyncio
 import json
+
+if DEBUG_ENABLE:
+    # Configure logging
+    logging.basicConfig(
+        level=logging.DEBUG,  # DEBUG level shows detailed logs
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s"
+    )
+    # Optional: limit logs from other libraries if too noisy
+    logging.getLogger("asyncio").setLevel(logging.WARNING)
+
 
 players = ["Player 1", "Player 2"]
 player_scores = [0, 0]
@@ -35,13 +47,13 @@ async def recv_turn(websocket):
 
         if action["action"] == "r":
             if action["roll"] == 1:
-                print(f"{players[0]} rolled a 1! No points this turn.")
+                print(f"{players[1]} rolled a 1! No points this turn.")
                 return 0
             else:
                 turn_total += action["roll"]
-                print(f"{players[0]} rolled a {action['roll']}. Total points this turn: {turn_total}")
+                print(f"{players[1]} rolled a {action['roll']}. Total points this turn: {turn_total}")
         else:
-            print(f"{players[0]} decides to hold. Total points this turn: {turn_total}")
+            print(f"{players[1]} decides to hold. Total points this turn: {turn_total}")
             return turn_total
 
 
@@ -84,4 +96,3 @@ def main(uri):
 if __name__ == "__main__":
     uri = "ws://10.10.2.135:8765"
     main(uri)
-    
